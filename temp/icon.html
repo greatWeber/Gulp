@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>iconfont实例</title>
+	<link rel="stylesheet" href="<%= cssPath %>">
+	<style>
+		.container {
+			display: flex;
+		}
+
+		.container .sprite-item {
+			flex: 1;
+			text-align: center;
+			position: relative;
+		}
+
+		.sprite-img {
+			font-size: 12px;
+		}
+
+		.sprite-img:hover {
+			color: #ccc;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<% _.forEach(icons, function(icon){ %>
+	<div class="sprite-item">
+		<div class="sprite-img <%= cssClass %>-<%= icon %>">
+		</div>
+		<p class="sprite-name">
+			<span class="classname"><%= cssClass %>-<%= icon %></span>
+				
+		</p>
+	</div>
+	<% }); %>
+</div>
+</body>
+</html>

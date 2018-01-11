@@ -1,0 +1,19 @@
+ 
+@function getUrl($name) {
+	@if $name == 'default.png'{
+		@return '../images/sprite/'+$name;
+	}
+
+	@if $name != 'default.png'{
+		@return '../../images/sprite/'+$name;
+	}
+}
+ {{#sprites}}
+.{{class_name}}-{{name}} {
+      display: inline-block;
+      background-image: url(getUrl('{{{css_image}}}'));
+      background-position: {{px.offset_x}} {{px.offset_y}};
+      width: {{px.width}};
+      height: {{px.height}};
+    }
+{{/sprites}} 

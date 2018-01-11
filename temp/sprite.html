@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>sprite实例</title>
+	<link rel="stylesheet" href="<%= css %>">
+	<style>
+		.container {
+			display: flex;
+		}
+
+		.container .sprite-item {
+			flex: 1;
+			text-align: center;
+			position: relative;
+		}
+
+		.sprite-item .sprite-name {
+			height: 100%;
+		    width: 100%;
+		    position: absolute;
+		    background: rgba(0,0,0,0.8);
+		    text-align: center;
+		    display: none;
+		}
+		.sprite-item .sprite-name .classname {
+			position: absolute;
+		    left: 0;
+		    right: 0;
+		    top: 50%;
+		    color: #fff;
+		} 
+
+		.sprite-item:hover > .sprite-name {
+			display: block;
+		} 
+	</style>
+</head>
+<body>
+<div class="container">
+	<% _.forEach(pngs, function(png){ %>
+	<div class="sprite-item">
+		<p class="sprite-name">
+			<span class="classname"><%= name %>-<%= png %></span>
+				
+		</p>
+		<div class="sprite-img <%= name %>-<%= png %>">
+			
+		</div>
+	</div>
+	<% }); %>
+</div>
+</body>
+</html>
