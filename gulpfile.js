@@ -69,15 +69,7 @@ gulp.task('init', function() {
 });
 
 
-// gulp.task('default',()=>{
-// 	setCfg(()=>{
-// 		sequence(['scss'],'watch');
-// 		console.log('over');
-// 	});
-
-// });
-
-gulp.task('default', sequence(['scss'], 'watch'));
+gulp.task('default', sequence( 'watch'));
 
 //读取json文件的配置
 function setCfg(callback) {
@@ -131,13 +123,14 @@ function dels(base,event){
         
     }
     console.log(event.event);
-
-    // let path = event.history[0].split('\\');
-    //     let name = path[path.length-1];
-    //     let dir = path[path.length-2];
-
-    //  console.log(base+':'+dir+':'+name);
 }
+
+// 创建目录
+gulp.task('build', ()=>{
+    setCfg(()=>{
+        file.createDir(cfg,['scss','js','es6','images','sprites','icons']);
+    });
+});
 
 
 gulp.task('watch', () => {
@@ -165,21 +158,13 @@ gulp.task('watch', () => {
             reload();
         });
 
-        // gulp.watch(cfg.src + '/js/**/*.js', ['js']).on('change', (e) => {
-        //     console.log("js was changed!");
-        //     reload();
-        // });
-
 
         watch(`${cfg.dist}/**/*.html`, ()=>{
             console.log("html was changed!");
             reload();
         });
 
-        // gulp.watch(cfg.dist + '**/*.html').on('change', (e) => {
-        //     console.log('html was changed');
-        //     reload();
-        // });
+
 
         watch(cfg.src+'/images/**/*', (event)=>{
             console.log('image was changed');
@@ -322,21 +307,6 @@ gulp.task('image', () => {
                     ]))
                 .pipe(gulp.dest(dist));
         }
-
-		// return gulp.src(cfg.src+'/images/img/**/*')
-  //                   .pipe(changed(cfg.dist+'/images/img'))
-		// 			.pipe(imagemin([
-		// 				imagemin.gifsicle({interlaced: true}),
-		// 				imagemin.jpegtran({progressive: true}),
-		// 				imagemin.optipng({optimizationLevel:5}),
-		// 				imagemin.svgo({
-		// 					plugins: [
-		// 						{removeViewBox: true},
-		// 						{cleanupIDs: false}
-		// 					]
-		// 				})
-		// 			]))
-		// 			.pipe(gulp.dest(cfg.dist+'/images/img'));
 	})
 });
 

@@ -27,6 +27,29 @@ let file = {
 		});
 		result.push('./');
 	    return result;
+	},
+
+	createDir: (cfg,dirs)=>{
+		if(!fs.existsSync(cfg.src)){
+			fs.mkdirSync(cfg.src, (err)=>{
+				if(err){
+					console.error(err);
+				}
+			})
+		}
+
+		dirs.forEach((item, i)=>{
+
+			let fPath = path.join(cfg.src, item);
+			if(!fs.existsSync(fPath)) {
+				fs.mkdir(fPath, (err)=>{
+					if(err){
+						console.error(err);
+					}
+					console.log(`${item}目录创建成功`);
+				})
+			}
+		})
 	}
 };
 
