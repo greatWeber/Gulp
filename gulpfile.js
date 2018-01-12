@@ -40,6 +40,8 @@ let fs = require('fs');
 
 let path = require('path');
 
+let del = require('del');
+
 // ----------------------------------
 
 let file = require('./js/file.js');
@@ -103,12 +105,38 @@ function Push() {
     file.write(path.join(__dirname, 'path.json'), pathArr);
 }
 
+// 同步删除文件
 function dels(base,event){
-    let path = event.history[0].split('\\');
-    let name = path[path.length-1];
-    let dir = path[path.length-2];
+    if(event.event == 'unlink'){
+        let path = event.history[0].split('\\');
+        let name = path[path.length-1];
+        let dir = path[path.length-2];
+        let fsName;
+        if(base == 'css'){
+            fsName = name.split('.')[0]+'.css';
 
-    // console.log(base+':'+dir+':'+name);
+        }else{
+            fsName = name;
+        }
+        if(dir == 'scss'){
+            dir = 'css'
+        }
+        if(dir == base){
+            console.log(`${cfg.dist}/${base}/${fsName}`);
+            del([`${cfg.dist}/${base}/${fsName}`],{force:true});
+        }else{
+            console.log(`${cfg.dist}/${base}/${dir}/${fsName}`);
+            del([`${cfg.dist}/${base}/${dir}/${fsName}`],{force:true});
+        }
+        
+    }
+    console.log(event.event);
+
+    // let path = event.history[0].split('\\');
+    //     let name = path[path.length-1];
+    //     let dir = path[path.length-2];
+
+    //  console.log(base+':'+dir+':'+name);
 }
 
 
@@ -118,19 +146,21 @@ gulp.task('watch', () => {
         watch(`${cfg.src}/scss/**/*.scss`, (event)=>{
             // console.log(JSON.stringify(event));
             console.log("scss was changed!");
-            dels('scss',event);
+            dels('css',event);
             gulp.start('scss');
             reload();
         });
 
-         watch(`${cfg.src}/js/**/*.js`, ()=>{
+         watch(`${cfg.src}/js/**/*.js`, (event)=>{
             console.log("js was changed!");
+            dels('js',event);
             gulp.start('js');
             reload();
         });
 
-        watch(`${cfg.src}/es6/**/*.js`, ()=>{
+        watch(`${cfg.src}/es6/**/*.js`, (event)=>{
             console.log("es6 was changed!");
+            dels('es6',event);
             gulp.start('es6');
             reload();
         });
@@ -151,21 +181,22 @@ gulp.task('watch', () => {
         //     reload();
         // });
 
-        watch(cfg.src+'/images/img/**/*', (events)=>{
+        watch(cfg.src+'/images/**/*', (event)=>{
             console.log('image was changed');
+            dels('images',event);
             gulp.start('image');
         });
 
-        watch(cfg.src+'/images/sprite/**/*.png', (events)=>{
+        watch(cfg.src+'/sprites/**/*.png', (event)=>{
             console.log('sprite was changed');
-            gulp.start('sprite');
-            // foal.run(foal.sprite(events));
+            // gulp.start('sprite');
+            foal.run(foal.sprite(event));
         });
 
-         watch(cfg.src+'/icons/**/*.svg', (events)=>{
+         watch(cfg.src+'/icons/**/*.svg', (event)=>{
             console.log('iconfont was changed');
             // gulp.start('iconfont');
-            foal.run(foal.iconfont(events));
+            foal.run(foal.iconfont(event));
         });
     });
 });
@@ -261,18 +292,18 @@ gulp.task('es6', () => {
 // 压缩图片
 gulp.task('image', () => {
 	setCfg(()=>{
-        let paths = file.findDir(`${cfg.src}/js`);
+        let paths = file.findDir(`${cfg.src}/images`);
         for(let i=0;i<paths.length;i++){
             let name = paths[i];
             let src,dist;
             if(name == './'){
                 
-                src = `${cfg.src}/images/img/*`;
-                dist = `${cfg.dist}/images/img`;
+                src = `${cfg.src}/images/*`;
+                dist = `${cfg.dist}/images`;
             }else{
                 
-                src = `${cfg.src}/images/img/${name}/*`;
-                dist = `${cfg.dist}/images/img/${name}`;
+                src = `${cfg.src}/images/${name}/*`;
+                dist = `${cfg.dist}/images/${name}`;
             }
 
             gulp.src(src)
@@ -312,7 +343,7 @@ gulp.task('image', () => {
 //合并雪碧图
 gulp.task('sprite',()=>{
     setCfg(()=>{
-        let paths = file.findDir(`${cfg.src}/images/sprite`);
+        let paths = file.findDir(`${cfg.src}/sprites`);
         console.log(paths);
         for(let i=0;i<paths.length;i++){
             let name = paths[i];
@@ -322,101 +353,24 @@ gulp.task('sprite',()=>{
                 }
             }
 
-            // let name = paths[i];
-            // let src,dist;
-            // let imgName = `${name}.png`;
-            // let cssName = `font-${name}.scss`;
-            // if(name == './'){
-                
-            //     src = `${cfg.src}/images/sprite/*.png`;
-            //     dist = `${cfg.dist}/images/sprite`;
-            //     cssDist = `${cfg.src}/scss`;
-            // }else{
-                
-            //     src = `${cfg.src}/images/sprite/${name}/*.png`;
-            //     dist = `${cfg.dist}/images/sprite/${name}`;
-            //     cssDist = `${cfg.src}/scss/${name}`;
-
-            // }
-
-            // let spriteData = gulp.src(src)
-            //             .pipe(changed(dist))
-            //             .pipe(plumber())
-            //             .pipe(spritesmith({
-            //                 imgName: imgName,
-            //                 cssName: cssName,
-            //                 padding: 20,
-            //                 algorithm: 'binary-tree',
-            //                 cssTemplate: temp
-            //             }));
-            //             console.log(cfg.src);
-            // // console.log(spriteData);
-
-            // let imgStream = spriteData.img.pipe(buffer())
-            //                               .pipe(imagemin())
-            //                               .pipe(gulp.dest(dist));
-
-            // let cssStream = spriteData.css.pipe(gulp.dest(cssDist));
-
-            // merge(imgStream,cssStream);
         }
-        // for(let i=0;i<paths.length;i++){
-        //     let name = paths[i];
-        //     let src = `${cfg.src}/images/sprite/${name}/*.png`;
-        //     let imgName = `${name}.png`;
-        //     let cssName = `font-${name}.scss`;
-        //     let temp = `${__dirname}/temp/cssTemp.css.handlebars`;
-        //     let spriteData = gulp.src(src)
-        //                 .pipe(changed(cfg.dist+'/images/sprite'))
-        //                 .pipe(spritesmith({
-        //                     imgName: imgName,
-        //                     cssName: cssName,
-        //                     padding: 20,
-        //                     algorithm: 'binary-tree',
-        //                     cssTemplate: temp
-        //                 }));
-        //                 console.log(cfg.src);
-        //     // console.log(spriteData);
-
-        //     let imgStream = spriteData.img.pipe(buffer())
-        //                                   .pipe(imagemin())
-        //                                   .pipe(gulp.dest(`${cfg.dist}/images/sprite`));
-
-        //     let cssStream = spriteData.css.pipe(gulp.dest(`${cfg.src}/scss`));
-
-        //     merge(imgStream,cssStream);
-        // }
     })
 });
 
 
 // 还是合并雪碧图，优化版本
 foal.task('sprite', (event)=>{
-    let path = event.history[0].split('\\');
-    let name = path[path.length-2];
-    let src = `${cfg.src}/images/sprite/${name}/*.png`;
-    let imgName = `${name}.png`;
-    let cssName = `font-${name}.scss`;
-    let temp = `${__dirname}/temp/cssTemp.css.handlebars`;
-    let spriteData = gulp.src(src)
-                .pipe(changed(cfg.dist+'/images/sprite'))
-                .pipe(spritesmith({
-                    imgName: imgName,
-                    cssName: cssName,
-                    padding: 20,
-                    algorithm: 'binary-tree',
-                    cssTemplate: temp
-                }));
-                console.log(cfg.src);
-    // console.log(spriteData);
+    let paths = file.findDir(`${cfg.src}/sprites`);
+    console.log(paths);
+    for(let i=0;i<paths.length;i++){
+        let name = paths[i];
+        for(let k in sprite){
+            if(k != 'pngs'){
+                sprite[k](cfg,name);
+            }
+        }
 
-    let imgStream = spriteData.img.pipe(buffer())
-                                  .pipe(imagemin())
-                                  .pipe(gulp.dest(`${cfg.dist}/images/sprite`));
-
-    let cssStream = spriteData.css.pipe(gulp.dest(`${cfg.src}/scss/sprite`));
-
-    merge(imgStream,cssStream);
+    }
 });
 
 
@@ -426,14 +380,14 @@ foal.task('iconfont', (event)=>{
     console.log('you should make svg larger , 1024 is best!');
     //foal.run(foal.cleanFont(name));
 
-    setTimeout(()=>{
-        for(let k in icon){
-            if(k != 'icons'){
-                icon[k](cfg,name);
-            }
+    for(let k in icon){
+        if(k != 'icons'){
+            icon[k](cfg,name);
         }
+    }
+    // setTimeout(()=>{
         
-    },1000)
+    // },1000)
 
 });
 

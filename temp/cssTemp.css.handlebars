@@ -1,11 +1,11 @@
  
 @function getUrl($name) {
 	@if $name == 'default.png'{
-		@return '../images/sprite/'+$name;
+		@return '../sprites/'+$name;
 	}
 
 	@if $name != 'default.png'{
-		@return '../../images/sprite/'+$name;
+		@return '../../sprites/'+$name;
 	}
 }
  {{#sprites}}

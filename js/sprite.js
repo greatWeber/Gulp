@@ -23,24 +23,22 @@ let dir = path.resolve(__dirname,'..');
 
 let sprite = {
 	sprites: (cfg, name)=>{
-		let src,dist,cssDist,cssImg, className;
-        let imgName = `${name}.png`;
-        let cssName = `font-${name}.scss`;
+		let src,dist,cssDist,cssImg, className,imgName,cssName;
         let temp = `${dir}/temp/cssTemp.css.handlebars`;
         if(name == './'){
         	imgName = 'default.png';
-            cssName = 'font-default.scss';
+            cssName = 'sprite-default.scss';
             className = 'sprite-default';
-            src = `${cfg.src}/images/sprite/*.png`;
-            dist = `${cfg.dist}/images/sprite`;
+            src = `${cfg.src}/sprites/*.png`;
+            dist = `${cfg.dist}/sprites`;
             cssDist = `${cfg.src}/scss`;
             cssImg = `default.png`;
         }else{
         	imgName = `${name}.png`;
-            cssName = `font-${name}.scss`;
+            cssName = `sprite-${name}.scss`;
             className = `sprite-${name}`;
-            src = `${cfg.src}/images/sprite/${name}/*.png`;
-            dist = `${cfg.dist}/images/sprite/${name}`;
+            src = `${cfg.src}/sprites/${name}/*.png`;
+            dist = `${cfg.dist}/sprites/${name}`;
             cssDist = `${cfg.src}/scss/${name}`;
             cssImg = `${name}/${name}.png`;
         }
@@ -74,12 +72,12 @@ let sprite = {
 		let dist, cssDist, className;
         if(name == './'){
         	className = 'sprite-default';
-            dist = `${cfg.dist}/images/sprite`;
-            cssDist = '../../../css/font-default.css';
+            dist = `${cfg.dist}/sprites`;
+            cssDist = '../css/sprite-default.css';
         }else{
         	className = `sprite-${name}`;
-            dist = `${cfg.dist}/images/sprite/${name}`;
-            cssDist = `../../../css/${name}/font-${name}.css`;
+            dist = `${cfg.dist}/sprites/${name}`;
+            cssDist = `../../css/${name}/sprite-${name}.css`;
 
         }
         console.log('example');
@@ -98,10 +96,10 @@ let sprite = {
 	pngs: (cfg, name)=>{
 		let src;
         if(name == './'){
-            src = `${cfg.src}/images/sprite/`;
+            src = `${cfg.src}/sprites/`;
         }else{
             
-            src = `${cfg.src}/images/sprite/${name}/`;
+            src = `${cfg.src}/sprites/${name}/`;
         }
         let png = fs.readdirSync(src);
 		png = png.map((p)=>{
