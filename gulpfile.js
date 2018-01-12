@@ -54,6 +54,8 @@ let cfg = $.cfg;
 
 let gulp = $.gulp;
 
+let NAME;
+
 let pathArr = $.pathArr;
 
 
@@ -61,6 +63,7 @@ let pathArr = $.pathArr;
 gulp.task('init', function() {
     cfg.src = gulp.env.src;
     cfg.dist = gulp.env.dist;
+    cfg.name = gulp.env.name;
 
     setCfg(() => {
         Push();
@@ -70,6 +73,36 @@ gulp.task('init', function() {
 
 
 gulp.task('default', sequence( 'watch'));
+
+// gulp.task('setCfg', function(){
+//     console.log(gulp.env.name);
+//     if(cfg.src){
+//         callback && callback();
+//     }else{
+
+//         file.read(path.join(__dirname, 'path.json'), (err, data) => {
+//             if (err) {
+//                 console.log(err);
+//             } else {
+//                 if (data) {
+//                     pathArr = JSON.parse(data);
+//                 }
+//                 if(NAME){
+//                     pathArr.forEach((item, i)=>{
+//                         if(item.name == NAME){
+//                             cfg = item;
+//                         }
+//                     })
+//                 }else{
+
+//                 cfg = pathArr[pathArr.length - 1];
+//                 }
+//                 callback && callback();
+//             }
+
+//         });
+//     }
+// })
 
 //读取json文件的配置
 function setCfg(callback) {
@@ -83,8 +116,17 @@ function setCfg(callback) {
             } else {
                 if (data) {
                     pathArr = JSON.parse(data);
+                    if(NAME){
+                        pathArr.forEach((item, i)=>{
+                            if(item.name == NAME){
+                                cfg = item;
+                            }
+                        })
+                    }else{
+
+                        cfg = pathArr[pathArr.length - 1];
+                    }
                 }
-                cfg = pathArr[pathArr.length - 1];
                 callback && callback();
             }
 
@@ -93,7 +135,17 @@ function setCfg(callback) {
 }
 
 function Push() {
-    pathArr.push(cfg);
+    let isno = true;
+    for(let i=0;i<pathArr.length;i++){
+        if(pathArr[i].name == cfg.name){
+            pathArr[i] = cfg;
+            isno = false;
+            break;
+        }
+    }
+    if(isno){
+        pathArr.push(cfg);
+    }
     file.write(path.join(__dirname, 'path.json'), pathArr);
 }
 
